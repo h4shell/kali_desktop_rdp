@@ -9,4 +9,4 @@ services:
       - WAYLAND_DISPLAY=wayland-0
       - XDG_RUNTIME_DIR=/tmp/runtime-dir/
       - DISPLAY=:0
-    command: service dbus start; /usr/lib/systemd/systemd-logind & service xrdp start; /startvnc; bash
+    entrypoint: /bin/bash -c "echo ciao mondo & /usr/lib/systemd/systemd-logind & /startvnc & /etc/init.d/xrdp restart & service dbus start & tail -f /dev/null"
