@@ -1,0 +1,12 @@
+services:
+  kali:
+    build: infra/docker/kali
+    ports:
+      - 3389:3389
+      - 5902:5902
+    environment:
+      - PULSE_SERVER=/tmp/PulseServer
+      - WAYLAND_DISPLAY=wayland-0
+      - XDG_RUNTIME_DIR=/tmp/runtime-dir/
+      - DISPLAY=:0
+    command: service dbus start; /usr/lib/systemd/systemd-logind & service xrdp start; /startvnc; bash
