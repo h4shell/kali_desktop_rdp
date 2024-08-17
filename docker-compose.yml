@@ -9,4 +9,10 @@ services:
       - WAYLAND_DISPLAY=wayland-0
       - XDG_RUNTIME_DIR=/tmp/runtime-dir/
       - DISPLAY=:0
-    entrypoint: /bin/bash -c "echo ciao mondo & /usr/lib/systemd/systemd-logind & /startvnc & /etc/init.d/xrdp restart & service dbus start & tail -f /dev/null"
+    networks:
+      - my-network
+    entrypoint: /bin/bash -c "/usr/lib/systemd/systemd-logind & /startvnc & /etc/init.d/xrdp restart & service dbus start & tail -f /dev/null"
+  
+networks:
+  my-network:
+    driver: bridge
