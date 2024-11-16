@@ -2,7 +2,7 @@ services:
   kali:
     build: infra/docker/kali
     ports:
-      - 3389:3389
+      - 33389:3389
       - 5902:5902
     environment:
       - PULSE_SERVER=/tmp/PulseServer
@@ -12,7 +12,7 @@ services:
     networks:
       - my-network
     entrypoint: /bin/bash -c "/usr/lib/systemd/systemd-logind & /startvnc & /etc/init.d/xrdp restart & service dbus start & tail -f /dev/null"
-  
+
 networks:
   my-network:
     driver: bridge
