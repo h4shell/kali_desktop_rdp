@@ -1,17 +1,17 @@
 FROM kalilinux/kali-rolling:latest
 
 RUN apt update && \
-    DEBIAN_FRONTEND=noninteractive apt install -y kali-desktop-xfce kali-linux-default locales sudo
+    DEBIAN_FRONTEND=noninteractive apt install -y kali-desktop-xfce locales sudo
 
 RUN apt update && \
-    DEBIAN_FRONTEND=noninteractive apt install -y xrdp tigervnc-standalone-server && \
+    DEBIAN_FRONTEND=noninteractive apt install -y xrdp tightvncserver && \
     adduser xrdp ssl-cert && \
     echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     dpkg-reconfigure --frontend=noninteractive locales && \
     update-locale LANG=en_US.UTF-8
 
-ARG USER=testuser
-ARG PASS=1234
+ARG USER=user
+ARG PASS=password
 
 RUN useradd -m $USER -p $(openssl passwd $PASS) && \
     usermod -aG sudo $USER && \
@@ -25,7 +25,7 @@ RUN echo "#!/bin/sh\n\
     exec dbus-run-session -- xfce4-session" > /xstartup && chmod +x /xstartup
 
 RUN mkdir /home/$USER/.vnc && \
-    echo $PASS | vncpasswd -f > /home/$USER/.vnc/passwd && \
+    echo $PASS | tightvncpasswd -f > /home/$USER/.vnc/passwd && \
     chmod 0600 /home/$USER/.vnc/passwd && \
     chown -R $USER:$USER /home/$USER/.vnc
 
@@ -33,4 +33,4 @@ RUN cp -f /xstartup /etc/xrdp/startwm.sh && \
     cp -f /xstartup /home/$USER/.vnc/xstartup
 
 RUN echo "#!/bin/sh\n\
-    sudo -u $USER -g $USER -- vncserver -rfbport 5902 -geometry 1920x1080 -depth 24 -verbose -localhost no -autokill no" > /startvnc && chmod +x /startvnc
+    sudo -u $USER -g $USER -- tightvncserver :1" > /startvnc && chmod +x /startvnc

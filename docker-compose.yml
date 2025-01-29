@@ -3,15 +3,27 @@ services:
     build: infra/docker/kali
     ports:
       - 33389:3389
-      - 5902:5902
+      - 5901:5901
     environment:
       - PULSE_SERVER=/tmp/PulseServer
       - WAYLAND_DISPLAY=wayland-0
       - XDG_RUNTIME_DIR=/tmp/runtime-dir/
-      - DISPLAY=:0
+      - DISPLAY=novnc:0.0
     networks:
       - my-network
     entrypoint: /bin/bash -c "/usr/lib/systemd/systemd-logind & /startvnc & /etc/init.d/xrdp restart & service dbus start & tail -f /dev/null"
+
+  novnc:
+    image: bonigarcia/novnc:1.1.0
+    environment:
+      - AUTOCONNECT=true
+      - VNC_PASSWORD=password
+      - VNC_SERVER=kali:5901
+      - VIEW_ONLY=false
+    ports:
+      - "6080:6080"
+    networks:
+      - my-network
 
 networks:
   my-network:
